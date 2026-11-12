@@ -175,14 +175,17 @@ var STR = {
   exported: 'Exported {name}', noAudio: 'Web Audio is not available in this browser.',
   genres: { deep: 'Deep House', melodic: 'Melodic House', proghouse: 'Progressive House', progtrance: 'Progressive Trance', uplifting: 'Uplifting Trance' },
   scales: { min: 'Minor', dorian: 'Dorian', phrygian: 'Phrygian', harmonic: 'Harmonic minor', major: 'Major' },
-  partNames: { chords: 'Chords', bass: 'Bass', kick: 'Kick', drums: 'Drums', pattern: 'Pattern' },
+  partNames: { chords: 'Chords', harmony: 'Harmony', bass: 'Bass', kick: 'Kick', drums: 'Drums', pattern: 'Pattern', arp: 'Arpeggio', lead: 'Lead' },
   styles: {
     auto: 'Auto (genre default)',
     chords: { pad: 'Sustained pad', stab: 'Offbeat stab', pump: 'Gated 1/16 pump', arp: 'Arpeggiated' },
     bass: { sub: 'Sub bass', rolling: 'Rolling 16th bass', offbeat: 'Offbeat bass (trance)', synco: 'Syncopated melodic bass' },
     kick: { four: 'Four-on-the-floor', ghost: '4/4 + ghost kicks', halftime: 'Half-time intro', fill: '4/4 + fill on last bar' },
     drums: { groove: 'Groove only', fills: 'Groove + fills', build: 'Groove + build-up ending', riser: 'Build-up / riser only' },
-    pattern: { pluck: 'Pluck arp', arp16: '16th arp', gated: 'Gated pad', stab: 'Stab pattern', motif: 'Counter-melody motif' }
+    pattern: { pluck: 'Pluck arp', arp16: '16th arp', gated: 'Gated pad', stab: 'Stab pattern', motif: 'Counter-melody motif' },
+    harmony: { guide: 'Guide-tone strings', pedal: 'Pedal tone', swell: 'Chord swells', thirds: 'Thirds below the lead' },
+    lead: { anthem: 'Anthem (long notes)', riff: 'Rhythmic riff', call: 'Call and response', sparse: 'Sparse melody' },
+    arp: { up: 'Up', down: 'Down', updown: 'Up-down', random: 'Random (seeded)', octave: 'Root-octave bounce', poly: '3-against-4 cycle', triplet: '1/8 triplets' }
   },
   drumNames: { 36: 'Kick', 37: 'Rim', 38: 'Snare', 39: 'Clap', 41: 'Tom L', 42: 'CHat', 43: 'Tom M', 45: 'Tom H', 46: 'OHat', 51: 'Ride', 70: 'Shaker' },
   cardLabels: { inst: 'Instrument', osc: 'Oscillator', filter: 'Filter', env: 'Envelope', fx: 'Effects', mix: 'Mix tip',
@@ -299,6 +302,53 @@ var STR = {
         mix: 'Sits 500 Hz–6 kHz; keep it 3–4 dB under the main lead or vocal and pan slightly off-centre.'
       }
     },
+    harmony: {
+      base: {
+        inst: 'Wavetable — {vibe} string/voice layer that supports the chords. Alt: Sampler with a string or choir multisample, Analog.',
+        osc: '{strOsc}. Unison Classic, 4 voices, amount 15%.',
+        filter: 'LP 12, cutoff {strCut} Hz, res 5%, no envelope; second filter HP 12 at 250 Hz.',
+        env: 'Amp ADSR {strA} / 1500 ms / 85% / {strR} ms (slow swell). Glide off. LFO → pitch 5 Hz, depth 2% for a gentle ensemble wobble.',
+        fx: 'EQ Eight HP 300 Hz → Reverb {padRev} → Utility width 140% → Compressor sidechain from kick GR 3–4 dB.',
+        mix: 'Sits 300 Hz–9 kHz, 4–6 dB under the main chords. Carve 1–3 kHz when a lead or vocal plays; keep everything below 300 Hz out.'
+      },
+      notes: {
+        guide: 'Guide-tone lines (3rd and 7th/5th of each chord) glue the progression together: keep them quiet and wide.',
+        pedal: 'The pedal tone holds while the chords move underneath: automate the filter slowly to keep it alive.',
+        swell: 'Swells enter on the second half of each chord: lengthen the attack to 400–800 ms so they bloom into the change.',
+        thirds: 'Doubles the Lead part a diatonic third or more below: use the lead instrument at −6 dB, panned opposite.'
+      }
+    },
+    lead: {
+      base: {
+        inst: 'Wavetable — {vibe} mono lead. Alt: Analog, Operator (optional 3rd-party: Sylenth1, Serum).',
+        osc: '{leadOsc}. Unison {leadUni}.',
+        filter: 'LP 24, cutoff {leadCut} Hz, res 12%, filter-env amount 20%, key-tracking 60%.',
+        env: 'Amp ADSR 5 / 500 ms / 70% / {leadR} ms. Mono, glide {leadGlide} ms (legato). LFO vibrato 5.5 Hz, depth 5% on the mod wheel.',
+        fx: 'Saturator 2 dB → Echo {leadEcho} → Reverb {padRev} → EQ Eight HP 300 Hz → Compressor sidechain GR 2–3 dB.',
+        mix: 'Owns 1–5 kHz: cut pads and plucks 2–3 dB there. HP 300 Hz, de-harsh at 3–4 kHz, dry signal centred and effects wide.'
+      },
+      notes: {
+        anthem: 'Long anthem notes: automate cutoff and reverb amount upward across the phrase.',
+        riff: 'Short hook: shorten decay to 250 ms and sustain to 30% for a pluckier riff.',
+        call: 'Call-and-response phrasing: leave the gaps empty or let the Echo answer.',
+        sparse: 'Sparse phrases: long Echo and Reverb tails fill the space; keep the velocity dynamics.'
+      }
+    },
+    arp: {
+      base: {
+        inst: 'Wavetable — {vibe} arpeggio over two octaves (notes are written out, no Arpeggiator device needed). Alt: Operator, Analog.',
+        osc: 'Osc 1 saw, Osc 2 Basic Shapes square (position 70%) at −8 dB. Unison {pluckUni}.',
+        filter: 'LP 24, cutoff {pluckCut} Hz, res {pluckRes}%, filter-env amount {pluckFenv}%, env decay {pluckDec} ms. Automate the cutoff over 8–16 bars.',
+        env: 'Amp ADSR 1 / {pluckDec} ms / 20% / 150 ms. No glide. Velocity → filter 25% brings out the accents.',
+        fx: '{pluckEcho} → Reverb 22% wet, 2.5 s → Auto Filter HP 300 Hz → Compressor sidechain GR 3 dB.',
+        mix: 'Sits 300 Hz–10 kHz. HP 250–300 Hz, pan slightly against the Pattern part and duck 2 dB when the lead plays.'
+      },
+      notes: {
+        octave: 'Root/octave bounce: classic trance drive; works well layered an octave above the bass.',
+        poly: 'The 3-against-4 cycle shifts against the bar: try Echo at 3/16 to underline it.',
+        triplet: '1/8-triplet rate: set the Echo to a triplet time (1/8T) or switch it off.'
+      }
+    },
     kick: {
       inst: 'Operator on Drum Rack pad C1 — {kickChar} {genreName} kick. Osc A sine only, B–D off (or Simpler with a sample).',
       pitch: 'Pitch envelope on, amount {kickPitch}; the drop settles on {kickNote} = {kickHz} Hz ({kickRel} of {keyName}; genre target {kickRange} Hz).',
@@ -398,12 +448,28 @@ var STR = {
       tags: ['euphoric', 'supersaw', 'uplifting', 'huge']
     }
   },
+  /* Extra per-genre values for the Harmony and Lead cards */
+  soundExtra: {
+    deep: { strOsc: 'Osc 1 Basic Shapes triangle, Osc 2 saw at −10 dB', strCut: 1800, strA: 350, strR: 1200,
+      leadOsc: 'Osc 1 Basic Shapes triangle→saw (position 35%), Osc 2 sine +12 st at −14 dB', leadUni: 'Classic, 2 voices, 8%', leadCut: 2200, leadR: 400, leadGlide: 60, leadEcho: '1/8 dotted, feedback 30%, wet 20%' },
+    melodic: { strOsc: 'Osc 1 saw, Osc 2 saw +12 st at −10 dB', strCut: 3000, strA: 500, strR: 1800,
+      leadOsc: 'Osc 1 saw, Osc 2 Basic Shapes triangle +12 st at −10 dB', leadUni: 'Shimmer, 3 voices, 12%', leadCut: 3200, leadR: 500, leadGlide: 50, leadEcho: '1/4, feedback 35%, wet 24%' },
+    proghouse: { strOsc: 'Osc 1 saw, Osc 2 square (pulse width 35%) at −9 dB', strCut: 2400, strA: 450, strR: 1500,
+      leadOsc: 'Osc 1 saw, Osc 2 square (pulse width 45%) at −8 dB', leadUni: 'Classic, 3 voices, 14%', leadCut: 2800, leadR: 350, leadGlide: 40, leadEcho: '3/16, feedback 40%, wet 22%' },
+    progtrance: { strOsc: 'Osc 1 saw, Osc 2 saw +12 st at −8 dB', strCut: 5000, strA: 250, strR: 1200,
+      leadOsc: 'Osc 1 saw, Osc 2 saw +7 cents', leadUni: 'Classic, 5 voices, 20%', leadCut: 4500, leadR: 350, leadGlide: 30, leadEcho: '1/8 dotted, feedback 35%, wet 22%' },
+    uplifting: { strOsc: 'Osc 1 saw, Osc 2 saw +12 st at −6 dB', strCut: 7000, strA: 200, strR: 1500,
+      leadOsc: 'Supersaw lead: Osc 1 saw + Osc 2 saw +12 st at −6 dB', leadUni: 'Classic, 7 voices, 28%', leadCut: 6500, leadR: 450, leadGlide: 25, leadEcho: '1/8 dotted, feedback 40%, wet 26%' }
+  },
   styleTags: {
     chords: { pad: ['pad', 'sustained', 'wide'], stab: ['stab', 'offbeat', 'short'], pump: ['gated', 'pumping', '1/16'], arp: ['arp', 'arpeggiated', 'moving'] },
     bass: { sub: ['sub', 'deep', 'sine'], rolling: ['rolling', '16th', 'saw'], offbeat: ['offbeat', 'trance', 'saw'], synco: ['syncopated', 'melodic', 'groovy'] },
     kick: { four: ['4/4', 'punchy'], ghost: ['ghost', 'groove'], halftime: ['half-time', 'intro'], fill: ['fill', 'transition'] },
     drums: { groove: ['groove', 'hats', 'clap'], fills: ['fills', 'toms', 'hats'], build: ['build-up', 'snare roll', 'riser'], riser: ['riser', 'snare roll', 'build-up'] },
-    pattern: { pluck: ['pluck', 'arp', 'melodic'], arp16: ['arp', '16th', 'saw'], gated: ['gated', 'pad', 'trance gate'], stab: ['stab', 'rhythmic'], motif: ['melodic', 'motif', 'lead'] }
+    pattern: { pluck: ['pluck', 'arp', 'melodic'], arp16: ['arp', '16th', 'saw'], gated: ['gated', 'pad', 'trance gate'], stab: ['stab', 'rhythmic'], motif: ['melodic', 'motif', 'lead'] },
+    harmony: { guide: ['strings', 'guide tones', 'sustained'], pedal: ['pedal', 'drone', 'sustained'], swell: ['strings', 'swell', 'wide'], thirds: ['harmony', 'thirds', 'melodic'] },
+    lead: { anthem: ['lead', 'anthem', 'melodic'], riff: ['lead', 'riff', 'hook'], call: ['lead', 'call-response', 'melodic'], sparse: ['lead', 'sparse', 'melodic'] },
+    arp: { up: ['arp', 'rising'], down: ['arp', 'falling'], updown: ['arp', 'rolling'], random: ['arp', 'random'], octave: ['arp', 'octave', 'trance'], poly: ['arp', 'polyrhythm', 'hypnotic'], triplet: ['arp', 'triplet'] }
   },
   helpHtml: [
     ['h', 'How to use'],
@@ -419,8 +485,8 @@ var STR = {
       'Set Live\'s tempo to the BPM shown here (Live ignores the tempo stored in dragged MIDI files).',
       'Drag a .mid file from your Downloads folder onto a MIDI track (Session slot or Arrangement). The combined Type 1 file creates one track per part when dropped on the empty area below/right of the tracks.',
       'Kick and Drums: load a Drum Rack on the track. Notes use the GM layout starting at C1 (36 kick, 37 rim, 38 snare, 39 clap, 41/43/45 toms, 42 closed hat, 46 open hat, 51 ride, 70 shaker).',
-      'Chords, Bass and Pattern: load the instrument named on the sound-design card (Wavetable, Operator, Analog) and dial in the listed values.',
-      'Clips are exactly the chosen number of bars, so they loop cleanly. Put a Compressor with sidechain from the kick on bass, chords and patterns.'
+      'Chords, Harmony, Bass, Pattern, Arpeggio and Lead: load the instrument named on the sound-design card (Wavetable, Operator, Analog) and dial in the listed values.',
+      'Clips are exactly the chosen number of bars, so they loop cleanly. Put a Compressor with sidechain from the kick on every melodic part.'
     ]],
     ['h', 'Self-test'],
     ['p', 'Open the browser console and run runTests() to verify scale membership, loop length, MIDI validity, overlaps and BPM ranges.']
@@ -619,6 +685,13 @@ var GENRES = {
     shaker: false, rim: false, rideAt: 0.7, rideEighths: true, snareLayer: true, thick: true, drumDensity: 0.75, complexity: 40, energy: 80 }
 };
 
+/* default styles of the Harmony / Lead / Arpeggio parts per genre */
+Object.assign(GENRES.deep, { harmonyStyle: 'guide', leadStyle: 'sparse', arpStyle: 'updown' });
+Object.assign(GENRES.melodic, { harmonyStyle: 'guide', leadStyle: 'call', arpStyle: 'poly' });
+Object.assign(GENRES.proghouse, { harmonyStyle: 'pedal', leadStyle: 'riff', arpStyle: 'poly' });
+Object.assign(GENRES.progtrance, { harmonyStyle: 'swell', leadStyle: 'riff', arpStyle: 'octave' });
+Object.assign(GENRES.uplifting, { harmonyStyle: 'thirds', leadStyle: 'anthem', arpStyle: 'updown' });
+
 /** Artist-style presets: general stylistic profiles only, stored as editable JSON. */
 var DEFAULT_ARTIST_PRESETS = [
   { id: 'above-beyond', name: 'Above & Beyond', genre: 'uplifting', bpm: [132, 136], chordComplexity: 45, swing: 50, bassStyle: 'offbeat', drumDensity: 0.8, scale: 'min', chordMode: 'pad', patternStyle: 'arp16', energy: 82, tags: ['emotional', 'supersaw', 'anthemic'] },
@@ -626,7 +699,23 @@ var DEFAULT_ARTIST_PRESETS = [
   { id: 'marsh', name: 'Marsh', genre: 'melodic', bpm: [120, 124], chordComplexity: 60, swing: 52, bassStyle: 'rolling', drumDensity: 0.5, scale: 'min', chordMode: 'pad', patternStyle: 'pluck', energy: 55, tags: ['lush', 'dreamy', 'breakbeat-tinged'] },
   { id: 'kasablanca', name: 'Kasablanca', genre: 'melodic', bpm: [122, 126], chordComplexity: 40, swing: 50, bassStyle: 'synco', drumDensity: 0.6, scale: 'min', chordMode: 'stab', patternStyle: 'motif', energy: 68, tags: ['dark', 'synth-driven', 'cinematic'] },
   { id: 'tinlicker', name: 'Tinlicker', genre: 'proghouse', bpm: [122, 126], chordComplexity: 50, swing: 51, bassStyle: 'rolling', drumDensity: 0.6, scale: 'min', chordMode: 'arp', patternStyle: 'motif', energy: 65, tags: ['arp-driven', 'melancholic', 'hypnotic'] },
-  { id: 'oliver-smith', name: 'Oliver Smith', genre: 'progtrance', bpm: [128, 132], chordComplexity: 45, swing: 50, bassStyle: 'rolling', drumDensity: 0.7, scale: 'min', chordMode: 'pump', patternStyle: 'pluck', energy: 75, tags: ['driving', 'club', 'melodic'] }
+  { id: 'oliver-smith', name: 'Oliver Smith', genre: 'progtrance', bpm: [128, 132], chordComplexity: 45, swing: 50, bassStyle: 'rolling', drumDensity: 0.7, scale: 'min', chordMode: 'pump', patternStyle: 'pluck', energy: 75, tags: ['driving', 'club', 'melodic'] },
+  { id: 'ben-bohmer', name: 'Ben Böhmer', genre: 'melodic', bpm: [120, 124], chordComplexity: 62, swing: 51, bassStyle: 'sub', drumDensity: 0.45, scale: 'min', chordMode: 'pad', patternStyle: 'pluck', harmonyStyle: 'guide', leadStyle: 'sparse', arpStyle: 'updown', energy: 52, tags: ['organic', 'emotive', 'lush'] },
+  { id: 'dosem', name: 'Dosem', genre: 'proghouse', bpm: [124, 128], chordComplexity: 38, swing: 50, bassStyle: 'rolling', drumDensity: 0.7, scale: 'min', chordMode: 'stab', patternStyle: 'stab', harmonyStyle: 'pedal', leadStyle: 'riff', arpStyle: 'poly', energy: 74, tags: ['techy', 'driving', 'groovy'] },
+  { id: 'farius', name: 'Farius', genre: 'progtrance', bpm: [128, 132], chordComplexity: 48, swing: 50, bassStyle: 'offbeat', drumDensity: 0.7, scale: 'min', chordMode: 'pad', patternStyle: 'arp16', harmonyStyle: 'swell', leadStyle: 'anthem', arpStyle: 'updown', energy: 76, tags: ['melodic', 'uplifting', 'polished'] },
+  { id: 'mat-zo', name: 'Mat Zo', genre: 'progtrance', bpm: [128, 134], chordComplexity: 75, swing: 52, bassStyle: 'synco', drumDensity: 0.75, scale: 'dorian', chordMode: 'stab', patternStyle: 'stab', harmonyStyle: 'thirds', leadStyle: 'riff', arpStyle: 'random', energy: 82, tags: ['funky', 'eclectic', 'bright'] },
+  { id: 'rezident', name: 'Rezident', genre: 'melodic', bpm: [122, 126], chordComplexity: 50, swing: 50, bassStyle: 'rolling', drumDensity: 0.55, scale: 'min', chordMode: 'pad', patternStyle: 'motif', harmonyStyle: 'swell', leadStyle: 'call', arpStyle: 'poly', energy: 66, tags: ['emotive', 'vocal-friendly', 'driving'] },
+  { id: 'pretty-pink', name: 'Pretty Pink', genre: 'melodic', bpm: [120, 124], chordComplexity: 45, swing: 51, bassStyle: 'offbeat', drumDensity: 0.55, scale: 'min', chordMode: 'pump', patternStyle: 'pluck', harmonyStyle: 'guide', leadStyle: 'riff', arpStyle: 'up', energy: 64, tags: ['deep-progressive', 'groovy', 'warm'] },
+  { id: 'estiva', name: 'Estiva', genre: 'proghouse', bpm: [122, 126], chordComplexity: 55, swing: 50, bassStyle: 'rolling', drumDensity: 0.6, scale: 'min', chordMode: 'arp', patternStyle: 'pluck', harmonyStyle: 'guide', leadStyle: 'call', arpStyle: 'updown', energy: 68, tags: ['melodic', 'arp-driven', 'glassy'] },
+  { id: 'because-of-art', name: 'Because of Art', genre: 'proghouse', bpm: [123, 127], chordComplexity: 42, swing: 52, bassStyle: 'synco', drumDensity: 0.7, scale: 'min', chordMode: 'stab', patternStyle: 'motif', harmonyStyle: 'pedal', leadStyle: 'riff', arpStyle: 'octave', energy: 78, tags: ['punchy', 'rave-tinged', 'breaks-influenced'] },
+  { id: 'yotto', name: 'Yotto', genre: 'proghouse', bpm: [122, 126], chordComplexity: 48, swing: 50, bassStyle: 'rolling', drumDensity: 0.6, scale: 'min', chordMode: 'pad', patternStyle: 'motif', harmonyStyle: 'pedal', leadStyle: 'sparse', arpStyle: 'poly', energy: 66, tags: ['dark', 'cinematic', 'rolling'] },
+  { id: 'lane-8', name: 'Lane 8', genre: 'melodic', bpm: [120, 124], chordComplexity: 55, swing: 51, bassStyle: 'sub', drumDensity: 0.5, scale: 'major', chordMode: 'pad', patternStyle: 'pluck', harmonyStyle: 'guide', leadStyle: 'call', arpStyle: 'updown', energy: 58, tags: ['warm', 'dreamy', 'hopeful'] },
+  { id: 'jody-wisternoff', name: 'Jody Wisternoff', genre: 'deep', bpm: [120, 124], chordComplexity: 68, swing: 55, bassStyle: 'synco', drumDensity: 0.55, scale: 'dorian', chordMode: 'stab', patternStyle: 'stab', harmonyStyle: 'guide', leadStyle: 'sparse', arpStyle: 'up', energy: 56, tags: ['classic', 'soulful', 'shuffled'] },
+  { id: 'nox-vahn', name: 'Nox Vahn', genre: 'deep', bpm: [118, 122], chordComplexity: 58, swing: 53, bassStyle: 'sub', drumDensity: 0.4, scale: 'min', chordMode: 'pad', patternStyle: 'motif', harmonyStyle: 'pedal', leadStyle: 'sparse', arpStyle: 'poly', energy: 44, tags: ['moody', 'spacious', 'deep'] },
+  { id: 'ilan-bluestone', name: 'Ilan Bluestone', genre: 'progtrance', bpm: [128, 132], chordComplexity: 40, swing: 50, bassStyle: 'offbeat', drumDensity: 0.75, scale: 'min', chordMode: 'pump', patternStyle: 'arp16', harmonyStyle: 'swell', leadStyle: 'riff', arpStyle: 'octave', energy: 84, tags: ['big-room', 'punchy', 'anthemic'] },
+  { id: 'andrew-bayer', name: 'Andrew Bayer', genre: 'progtrance', bpm: [128, 134], chordComplexity: 70, swing: 50, bassStyle: 'rolling', drumDensity: 0.65, scale: 'min', chordMode: 'pad', patternStyle: 'gated', harmonyStyle: 'guide', leadStyle: 'anthem', arpStyle: 'triplet', energy: 72, tags: ['cinematic', 'detailed', 'emotional'] },
+  { id: 'grum', name: 'Grum', genre: 'progtrance', bpm: [128, 132], chordComplexity: 45, swing: 50, bassStyle: 'rolling', drumDensity: 0.7, scale: 'min', chordMode: 'pump', patternStyle: 'arp16', harmonyStyle: 'swell', leadStyle: 'anthem', arpStyle: 'up', energy: 78, tags: ['retro', 'saw', 'driving'] },
+  { id: 'spencer-brown', name: 'Spencer Brown', genre: 'proghouse', bpm: [122, 126], chordComplexity: 52, swing: 51, bassStyle: 'synco', drumDensity: 0.55, scale: 'dorian', chordMode: 'pad', patternStyle: 'pluck', harmonyStyle: 'pedal', leadStyle: 'call', arpStyle: 'random', energy: 62, tags: ['hypnotic', 'long-form', 'trippy'] }
 ];
 
 /** Ready-made library presets (one click = full generation). */
@@ -657,6 +746,17 @@ var LIBRARY = [
   { name: 'Copper Wire', genre: 'proghouse', artist: 'tinlicker', key: 4, scale: 'min', bars: 16, seed: 2501, tags: ['arp', 'melancholic'] },
   { name: 'Tin Roof Rain', genre: 'proghouse', artist: 'tinlicker', key: 9, scale: 'min', bars: 8, seed: 2502, styles: { pattern: 'pluck', chords: 'pad' }, tags: ['pluck', 'hypnotic'] },
   { name: 'Club Circuit', genre: 'progtrance', artist: 'oliver-smith', key: 5, scale: 'min', bars: 8, seed: 2601, tags: ['club', 'driving'] },
+  { name: 'Morning Vapour', genre: 'melodic', artist: 'ben-bohmer', key: 2, scale: 'min', bars: 16, seed: 2701, tags: ['organic', 'lush'] },
+  { name: 'Steel Current', genre: 'proghouse', artist: 'dosem', key: 7, scale: 'min', bars: 8, seed: 2801, tags: ['techy', 'driving'] },
+  { name: 'Far Shoreline', genre: 'progtrance', artist: 'farius', key: 4, scale: 'min', bars: 16, seed: 2901, tags: ['uplifting', 'anthem'] },
+  { name: 'Prism Funk', genre: 'progtrance', artist: 'mat-zo', key: 10, scale: 'dorian', bars: 8, seed: 3001, tags: ['funky', 'bright'] },
+  { name: 'Open Window', genre: 'melodic', artist: 'rezident', key: 0, scale: 'min', bars: 8, seed: 3101, tags: ['emotive', 'lead'] },
+  { name: 'Rose Quartz Groove', genre: 'melodic', artist: 'pretty-pink', key: 5, scale: 'min', bars: 8, seed: 3201, tags: ['groovy', 'warm'] },
+  { name: 'Glass Canal', genre: 'proghouse', artist: 'estiva', key: 9, scale: 'min', bars: 16, seed: 3301, tags: ['arp', 'glassy'] },
+  { name: 'Warehouse Bloom', genre: 'proghouse', artist: 'because-of-art', key: 6, scale: 'min', bars: 8, seed: 3401, tags: ['punchy', 'rave'] },
+  { name: 'Polar Night', genre: 'proghouse', artist: 'yotto', key: 3, scale: 'min', bars: 16, seed: 3501, tags: ['dark', 'cinematic'] },
+  { name: 'First Light', genre: 'melodic', artist: 'lane-8', key: 7, scale: 'major', bars: 8, seed: 3601, tags: ['hopeful', 'dreamy'] },
+  { name: 'Triplet Cathedral', genre: 'progtrance', artist: 'andrew-bayer', key: 1, scale: 'min', bars: 16, seed: 3701, tags: ['cinematic', 'triplet'] },
   { name: 'Main Room Pulse', genre: 'progtrance', artist: 'oliver-smith', key: 8, scale: 'min', bars: 16, seed: 2602, energy: 85, styles: { bass: 'offbeat', drums: 'fills' }, tags: ['peak-time', 'offbeat'] }
 ];
 
@@ -667,6 +767,9 @@ function resolveProfile(genreId, artist) {
     if (artist.bassStyle && STR.styles.bass[artist.bassStyle]) p.bassStyle = artist.bassStyle;
     if (artist.chordMode && STR.styles.chords[artist.chordMode]) p.chordMode = artist.chordMode;
     if (artist.patternStyle && STR.styles.pattern[artist.patternStyle]) p.patternStyle = artist.patternStyle;
+    if (artist.harmonyStyle && STR.styles.harmony[artist.harmonyStyle]) p.harmonyStyle = artist.harmonyStyle;
+    if (artist.leadStyle && STR.styles.lead[artist.leadStyle]) p.leadStyle = artist.leadStyle;
+    if (artist.arpStyle && STR.styles.arp[artist.arpStyle]) p.arpStyle = artist.arpStyle;
     if (typeof artist.drumDensity === 'number') p.drumDensity = clamp(artist.drumDensity, 0, 1);
   }
   return p;
@@ -687,13 +790,16 @@ function validateArtistPresets(list) {
  * 5. GENERATORS
  *    Note = { pitch, start (ticks), dur (ticks), vel }
  * ===================================================================== */
-var PART_IDS = ['chords', 'bass', 'kick', 'drums', 'pattern'];
+var PART_IDS = ['chords', 'harmony', 'bass', 'kick', 'drums', 'pattern', 'arp', 'lead'];
 var PARTS = {
   chords: { channel: 0, lo: 60, hi: 84, color: '#7c9cff', styles: ['pad', 'stab', 'pump', 'arp'] },
   bass: { channel: 1, lo: 36, hi: 60, color: '#ff8a5c', mono: true, styles: ['sub', 'rolling', 'offbeat', 'synco'] },
   kick: { channel: 9, lo: 36, hi: 36, color: '#ff5c7a', drum: true, styles: ['four', 'ghost', 'halftime', 'fill'] },
   drums: { channel: 9, color: '#ffd166', drum: true, styles: ['groove', 'fills', 'build', 'riser'] },
-  pattern: { channel: 2, lo: 72, hi: 96, color: '#5ce1c2', styles: ['pluck', 'arp16', 'gated', 'stab', 'motif'] }
+  pattern: { channel: 2, lo: 72, hi: 96, color: '#5ce1c2', styles: ['pluck', 'arp16', 'gated', 'stab', 'motif'] },
+  harmony: { channel: 3, lo: 60, hi: 96, color: '#b48cff', voice: 'chords', styles: ['guide', 'pedal', 'swell', 'thirds'] },
+  arp: { channel: 4, lo: 60, hi: 96, color: '#6fd3ff', voice: 'pattern', styles: ['up', 'down', 'updown', 'random', 'octave', 'poly', 'triplet'] },
+  lead: { channel: 5, lo: 72, hi: 96, color: '#ff7ad9', mono: true, voice: 'lead', styles: ['anthem', 'riff', 'call', 'sparse'] }
 };
 var DRUM = { kick: 36, rim: 37, snare: 38, clap: 39, tomL: 41, chat: 42, tomM: 43, tomH: 45, ohat: 46, ride: 51, shaker: 70 };
 
@@ -1056,7 +1162,119 @@ function genPattern(ctx, style, rng) {
   return { notes: notes, style: style, info: '' };
 }
 
-/* ---- 5.6 Post-processing: swing, humanize, loop-safe clean-up ------- */
+/* ---- 5.6 Lead, Harmony, Arpeggio ------------------------------------ */
+function pitchLadder(pcs, lo, hi) { var out = []; for (var p = lo; p <= hi; p++) if (pcs.indexOf(p % 12) >= 0) out.push(p); return out; }
+function nearestPitch(list, target) {
+  var best = list[0];
+  list.forEach(function (p) { if (Math.abs(p - target) < Math.abs(best - target)) best = p; });
+  return best;
+}
+/* 2-bar rhythm cells as [position, length] in 16ths: "a" = question, "b" = answer */
+var LEAD_CELLS = {
+  anthem: {
+    a: [[[0, 6], [6, 2], [8, 6], [14, 2], [16, 8], [24, 4], [28, 4]], [[0, 4], [4, 4], [8, 6], [14, 2], [16, 6], [22, 2], [24, 8]], [[0, 8], [8, 4], [12, 4], [16, 6], [22, 2], [24, 8]]],
+    b: [[[0, 6], [6, 2], [8, 8], [16, 4], [20, 4], [24, 8]], [[0, 4], [4, 2], [6, 2], [8, 8], [16, 6], [22, 2], [24, 8]], [[0, 8], [8, 6], [14, 2], [16, 12]]]
+  },
+  riff: {
+    a: [[[0, 2], [3, 2], [6, 2], [8, 2], [11, 2], [14, 2], [16, 2], [19, 2], [22, 2], [24, 4]], [[0, 3], [3, 3], [6, 2], [10, 2], [12, 4], [16, 3], [19, 3], [22, 2], [26, 2], [28, 4]], [[2, 2], [4, 2], [7, 2], [10, 2], [12, 3], [18, 2], [20, 2], [23, 2], [26, 2], [28, 3]]],
+    b: [[[0, 2], [3, 2], [6, 2], [8, 2], [11, 2], [14, 2], [16, 3], [19, 3], [22, 2], [24, 6]], [[0, 3], [3, 3], [6, 2], [10, 2], [12, 4], [16, 2], [18, 2], [20, 4], [24, 6]]]
+  },
+  call: {
+    a: [[[0, 2], [2, 2], [4, 3], [7, 3], [10, 2], [12, 4], [24, 2], [26, 2], [28, 4]], [[0, 3], [3, 2], [6, 2], [8, 6], [22, 2], [24, 3], [27, 3]], [[2, 2], [4, 2], [6, 3], [10, 2], [12, 6], [26, 2], [28, 4]]],
+    b: [[[0, 3], [3, 3], [6, 4], [12, 6], [24, 6]], [[0, 4], [4, 2], [6, 6], [16, 4], [20, 8]], [[2, 2], [4, 4], [8, 6], [20, 2], [22, 8]]]
+  },
+  sparse: {
+    a: [[[0, 6], [10, 2], [12, 6], [24, 6]], [[4, 4], [8, 6], [20, 2], [22, 8]], [[0, 8], [14, 2], [16, 10]]],
+    b: [[[0, 6], [10, 2], [12, 8], [26, 4]], [[2, 6], [8, 6], [20, 10]], [[0, 10], [12, 4], [16, 12]]]
+  }
+};
+/** Main melody: 4-bar question/answer phrase, re-fitted to every chord, resolving on a chord tone. */
+function genLead(ctx, style, rng) {
+  var LO = PARTS.lead.lo, HI = PARTS.lead.hi, notes = [], cx = ctx.complexity, vBase = 82 + ctx.energy * 22;
+  var set = LEAD_CELLS[style], A = rng.pick(set.a), B = rng.pick(set.b);
+  var walk = function (cell, start) {
+    var off = start;
+    return cell.map(function (_, k) { if (k) off = clamp(off + rng.pick([-2, -1, -1, 1, 1, 2]), -4, 5); return off; });
+  };
+  var cA = walk(A, 0), cB = walk(B, rng.pick([1, 2, 3])); // the answer starts higher ...
+  cB[cB.length - 1] = 0;                                   // ... and resolves to the anchor tone
+  var cB2 = cB.map(function (v, k) { return (k >= cB.length - 3 && k < cB.length - 1) ? v + 1 : v; });
+  for (var b = 0; b < ctx.bars; b += 2) {
+    var isB = (b / 2) % 2 === 1, cell = isB ? B : A;
+    var steps = isB ? ((cx > 0.4 && Math.floor(b / 4) % 2 === 1) ? cB2 : cB) : cA;
+    cell.forEach(function (sl, k) {
+      var t = b * BAR + sl[0] * S16, c = ctx.chordAt(t);
+      var tones = pitchLadder(c.pcs, LO, HI), sc = pitchLadder(c.local, LO, HI);
+      var p = sc[clamp(sc.indexOf(nearestPitch(tones, 84)) + steps[k], 0, sc.length - 1)];
+      if (sl[0] % 4 === 0 || sl[1] >= 3) p = nearestPitch(tones, p); // strong/long notes are chord tones
+      notes.push({ pitch: p, start: t, dur: sl[1] * S16 - 15, vel: vBase + (sl[0] % 8 === 0 ? 8 : 0) });
+    });
+  }
+  return { notes: notes, style: style, info: '' };
+}
+/** Supporting harmonic layer: guide tones, pedal, swells, or a line shadowing the lead. */
+function genHarmony(ctx, style, rng) {
+  var LO = PARTS.harmony.lo, HI = PARTS.harmony.hi, notes = [], vBase = 62 + ctx.energy * 22, prev = null;
+  if (style === 'guide') { // 3rd + 7th (or 5th) of every chord, voice-led as two slow lines
+    ctx.chords.forEach(function (ch) {
+      var v = voiceChord([ch.pcs[1], ch.pcs[3] !== undefined ? ch.pcs[3] : ch.pcs[2]], prev, 67, 86, 77, ch.rootPc);
+      prev = v;
+      v.forEach(function (p) { notes.push({ pitch: p, start: ch.start, dur: ch.dur - 10, vel: vBase }); });
+    });
+  } else if (style === 'pedal') { // tonic (or fifth) held while the chords move; consecutive equal pitches are tied
+    var tonic = ctx.key % 12, fifth = (ctx.key + 7) % 12, last = null, high = rng.chance(0.5);
+    ctx.chords.forEach(function (ch) {
+      var clash = function (pc) { return ch.pcs.some(function (x) { var d = (x - pc + 12) % 12; return d === 1 || d === 11; }); };
+      var pc = !clash(tonic) ? tonic : !clash(fifth) ? fifth : ch.pcs[0];
+      var p = nearestPitch(pitchLadder([pc], 67, 84), high ? 79 : 72);
+      if (last && last.pitch === p && last.dur + ch.dur <= 2 * BAR) last.dur += ch.dur;
+      else { last = { pitch: p, start: ch.start, dur: ch.dur - 10, vel: vBase }; notes.push(last); }
+    });
+    if (ctx.energy > 0.5) notes.slice().forEach(function (n) { if (n.pitch + 12 <= HI) notes.push({ pitch: n.pitch + 12, start: n.start, dur: n.dur, vel: n.vel - 10 }); });
+  } else if (style === 'swell') { // high triad entering on the second half of each chord
+    ctx.chords.forEach(function (ch) {
+      var v = voiceChord(ch.pcs.slice(0, 3), prev, 72, 93, 82, ch.rootPc);
+      prev = v;
+      var half = ch.dur >= BAR ? ch.dur / 2 : 0;
+      v.forEach(function (p) { notes.push({ pitch: p, start: ch.start + half, dur: ch.dur - half - 10, vel: vBase + 6 }); });
+    });
+  } else { // thirds: shadow the Lead part a diatonic third below (chord tone on strong/long notes)
+    var lead = genLead(ctx, ctx.styleFor('lead'), makeRng([ctx.seed, 'lead', ctx.vars.lead || 0])).notes;
+    lead.forEach(function (n) {
+      var c = ctx.chordAt(n.start), sc = pitchLadder(c.local, LO, HI), tones = pitchLadder(c.pcs, LO, HI);
+      var p = sc[Math.max(0, sc.indexOf(n.pitch) - 2)];
+      if (n.start % (S16 * 4) === 0 || n.dur >= 3 * S16 - 15) {
+        var below = tones.filter(function (x) { return x <= n.pitch - 3; });
+        if (below.length) p = below[below.length - 1];
+      }
+      notes.push({ pitch: p, start: n.start, dur: n.dur, vel: vBase });
+    });
+  }
+  return { notes: notes, style: style, info: '' };
+}
+/** Dedicated arpeggiator: chord tones over about two octaves, restarting on every chord change. */
+function genArp(ctx, style, rng) {
+  var LO = PARTS.arp.lo, HI = PARTS.arp.hi, notes = [], vBase = 72 + ctx.energy * 24;
+  var step = style === 'triplet' ? PPQ / 3 : S16;
+  var span = ctx.complexity > 0.5 ? 7 : 5, rnd = [], i;
+  for (i = 0; i < 16; i++) rnd.push(i % 4 === 0 ? 0 : rng.int(span));
+  var tri = function (k, n) { var m = k % (2 * (n - 1)); return m < n ? m : 2 * (n - 1) - m; };
+  for (var t = 0; t < ctx.total; t += step) {
+    var c = ctx.chordAt(t), n = c.pcs.length;
+    var root = LO + ((c.rootPc - LO % 12 + 12) % 12);
+    var lad = pitchLadder(c.pcs, root, HI), k = Math.round((t - c.start) / step), idx;
+    if (style === 'up') idx = k % span;
+    else if (style === 'down') idx = span - 1 - (k % span);
+    else if (style === 'random') idx = rnd[k % 16];
+    else if (style === 'octave') idx = (k % 2 ? n : 0) + (k % 8 === 6 ? 2 : 0);
+    else if (style === 'poly') idx = (k % 3) + (Math.floor(k / 3) % 2 ? n : 0);
+    else idx = tri(k, span); // updown, triplet
+    notes.push({ pitch: lad[clamp(idx, 0, lad.length - 1)], start: t, dur: Math.round(step * 0.8), vel: vBase + (t % PPQ === 0 ? 12 : 0) });
+  }
+  return { notes: notes, style: style, info: '' };
+}
+
+/* ---- 5.7 Post-processing: swing, humanize, loop-safe clean-up ------- */
 function applySwing(notes, swingPct) {
   var off = Math.round(PPQ / 2 * (swingPct - 50) / 100);
   if (!off) return;
@@ -1102,12 +1320,15 @@ function finalize(notes, total, mono) {
 function generateSong(cfg) {
   var profile = resolveProfile(cfg.genre, cfg.artistPreset);
   var ctx = buildContext(cfg, profile);
-  var gens = { chords: genChords, bass: genBass, kick: genKick, drums: genDrums, pattern: genPattern };
-  var autoStyle = { chords: profile.chordMode, bass: profile.bassStyle, pattern: profile.patternStyle, kick: 'auto', drums: 'auto' };
+  var gens = { chords: genChords, bass: genBass, kick: genKick, drums: genDrums, pattern: genPattern, harmony: genHarmony, lead: genLead, arp: genArp };
+  var autoStyle = { chords: profile.chordMode, bass: profile.bassStyle, pattern: profile.patternStyle, kick: 'auto', drums: 'auto',
+    harmony: profile.harmonyStyle, lead: profile.leadStyle, arp: profile.arpStyle };
+  ctx.seed = cfg.seed; ctx.vars = cfg.vars;
+  ctx.styleFor = function (pid) { var r = cfg.styles[pid] || 'auto'; return r === 'auto' ? autoStyle[pid] : r; };
   var parts = {};
   PART_IDS.forEach(function (pid) {
-    var req = cfg.styles[pid] || 'auto', v = cfg.vars[pid] || 0;
-    var res = gens[pid](ctx, req === 'auto' ? autoStyle[pid] : req, makeRng([cfg.seed, pid, v]));
+    var v = cfg.vars[pid] || 0;
+    var res = gens[pid](ctx, ctx.styleFor(pid), makeRng([cfg.seed, pid, v]));
     applySwing(res.notes, cfg.swing);
     humanize(res.notes, cfg.humanize, makeRng([cfg.seed, pid, v, 'humanize']),
       { timing: pid !== 'kick', ghostVelOnly: pid === 'kick' }); // the kick stays on the grid
@@ -1128,7 +1349,7 @@ function kickTuning(key) {
 }
 function soundCard(pid, part, song) {
   var g = song.profile.id, S = STR.sound[g], L = STR.cardLabels, C = STR.cards[pid];
-  var params = Object.assign({}, S, { genreName: STR.genres[g], keyName: NOTE_NAMES[song.cfg.key] + ' ' + STR.scales[song.cfg.scale].toLowerCase() });
+  var params = Object.assign({}, S, STR.soundExtra[g], { genreName: STR.genres[g], keyName: NOTE_NAMES[song.cfg.key] + ' ' + STR.scales[song.cfg.scale].toLowerCase() });
   var lines = [], tags;
   var add = function (label, tpl) { lines.push([label, fmt(tpl, params)]); };
   if (pid === 'kick') {
@@ -1146,8 +1367,9 @@ function soundCard(pid, part, song) {
     if (part.style === 'build' || part.style === 'riser') add(L.note, C.noteBuild);
     tags = ['drums'].concat(STR.styleTags.drums[part.style] || [], S.tags.slice(3));
   } else {
-    var T = C[part.style];
+    var T = C[part.style] || C.base;
     add(L.inst, T.inst); add(L.osc, T.osc); add(L.filter, T.filter); add(L.env, T.env); add(L.fx, T.fx); add(L.mix, T.mix);
+    if (C.notes && C.notes[part.style]) add(L.note, C.notes[part.style]);
     tags = (STR.styleTags[pid][part.style] || []).concat(S.tags.slice(0, 3));
   }
   var seen = {};
@@ -1202,7 +1424,7 @@ function midiForPart(song, pid) {
 }
 /** Combined multitrack file (Type 1: conductor track + one track per part). */
 function midiCombined(song) {
-  var order = ['kick', 'drums', 'bass', 'chords', 'pattern'];
+  var order = ['kick', 'drums', 'bass', 'chords', 'harmony', 'pattern', 'arp', 'lead'];
   var bytes = midiHeader(1, order.length + 1).concat(trackChunk('Anjuna MIDI Generator', conductorEvents(song), song.ctx.total));
   order.forEach(function (pid) {
     bytes = bytes.concat(trackChunk(STR.partNames[pid], noteEvents(song.parts[pid].notes, PARTS[pid].channel), song.ctx.total));
@@ -1302,6 +1524,12 @@ function createPlayer() {
       env(g, t, n.vel * 0.09, 0.003, n.dur, 0.12);
       osc('sawtooth', hz, 5, t, t + n.dur + 0.15, f); osc('square', hz, -5, t, t + n.dur + 0.15, f);
     },
+    lead: function (t, n) {
+      var g = ac.createGain(), f = ac.createBiquadFilter(), hz = midiToHz(n.pitch);
+      f.type = 'lowpass'; f.frequency.value = 3800; f.connect(g); g.connect(bus);
+      env(g, t, n.vel * 0.1, 0.01, n.dur, 0.18);
+      osc('sawtooth', hz, -9, t, t + n.dur + 0.25, f); osc('sawtooth', hz, 9, t, t + n.dur + 0.25, f); osc('triangle', hz * 2, 0, t, t + n.dur + 0.25, f);
+    },
     kick: function (t, n) { tone(t, 170, 50, 0.08, 0.3, n.vel * 0.95); noiseHit(t, 0.012, 'highpass', 2500, n.vel * 0.15); },
     drums: function (t, n) {
       var v = n.vel;
@@ -1374,15 +1602,15 @@ function initUI() {
     (children || []).forEach(function (c) { if (c) n.appendChild(c); });
     return n;
   }
-  var STORE_KEY = 'anjunaMidiGen.artistPresets';
+  var STORE_KEY = 'anjunaMidiGen.artistPresets.v2';
   var state = {
     s: { genre: 'melodic', artist: '', key: 9, scale: 'min', bpm: 123, bars: 8, swing: 51, complexity: 50, energy: 55, humanize: 30, seed: '2024' },
-    styles: { chords: 'auto', bass: 'auto', kick: 'auto', drums: 'auto', pattern: 'auto' },
-    vars: { chords: 0, bass: 0, kick: 0, drums: 0, pattern: 0 },
+    styles: {}, vars: {},
     filters: { genres: {}, artists: {}, parts: {}, q: '' },
     artists: JSON.parse(JSON.stringify(DEFAULT_ARTIST_PRESETS)),
     song: null, playing: [], cards: {}
   };
+  PART_IDS.forEach(function (pid) { state.styles[pid] = 'auto'; state.vars[pid] = 0; });
   try {
     var saved = window.localStorage.getItem(STORE_KEY);
     if (saved) state.artists = validateArtistPresets(JSON.parse(saved));
@@ -1635,7 +1863,7 @@ function initUI() {
     var song = state.song, spt = 60 / (song.cfg.bpm * PPQ), events = [];
     pids.forEach(function (pid) {
       song.parts[pid].notes.forEach(function (n) {
-        events.push({ t: n.start * spt, dur: n.dur * spt, pitch: n.pitch, vel: n.vel / 127, voice: pid });
+        events.push({ t: n.start * spt, dur: n.dur * spt, pitch: n.pitch, vel: n.vel / 127, voice: PARTS[pid].voice || pid });
       });
     });
     events.sort(function (a, b) { return a.t - b.t; });
@@ -1778,7 +2006,7 @@ function runTests() {
     });
     try {
       var c = parseMidi(midiCombined(song));
-      if (c.format !== 1 || c.ntracks !== 6 || c.division !== PPQ || c.tracks.some(function (t) { return !t.eot || t.endTick !== total; })) note('midi', label + '/combined');
+      if (c.format !== 1 || c.ntracks !== PART_IDS.length + 1 || c.division !== PPQ || c.tracks.some(function (t) { return !t.eot || t.endTick !== total; })) note('midi', label + '/combined');
     } catch (err2) { note('midi', label + '/combined ' + err2.message); }
     combos++;
   }
