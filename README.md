@@ -2,7 +2,7 @@
 
 A single offline `index.html` (vanilla JS + CSS, no dependencies, no build step) that generates original,
 genre-correct MIDI parts (chords, harmony, bass, kick, drums, pattern, arpeggio, lead) in the deep house / melodic house / progressive house / progressive trance /
-uplifting trance space, shows a Live 10 sound-design card for every part, and exports `.mid` files.
+uplifting trance space, shows a Live 10 sound-design card (device, settings and a step-by-step FX chain) for every part, and exports `.mid` files.
 
 ## Use
 
@@ -12,8 +12,14 @@ uplifting trance space, shows a Live 10 sound-design card for every part, and ex
    result; **Re-roll** picks a new seed; **Regenerate** on a part changes only that part
    (regenerating Chords also re-fits every melodic part to the new progression; the "Thirds below the lead" harmony style follows the Lead part).
 4. Shape it with Swing, Complexity, Energy, Humanize and each part's **Style** menu.
-5. **Play preview** / **Play all** audition with a simple built-in synth.
-6. **Download .mid** per part, **Export all parts (separate .mid)**, or **Export combined multitrack .mid (Type 1)**.
+5. **See the key:** the banner above the parts shows the key, its notes and the relative major/minor
+   (for example B minor = same notes as D major), and every piano roll labels its notes.
+6. **Edit chords:** click a chord under the Chords piano roll and change its scale degree, type or single notes.
+   Bass, harmony, pattern, arpeggio and lead follow the change.
+7. **Edit notes:** drag notes in any piano roll, double-click to add or delete, or use the keyboard
+   (`[` `]` select, arrows move, Shift+arrows length, `+`/`-` velocity, Delete). Shift-drag allows notes outside the scale.
+8. **Play preview** / **Play all** audition with a simple built-in synth.
+9. **Download .mid** per part, **Export all parts (separate .mid)**, or **Export combined multitrack .mid (Type 1)**.
 
 ## Import into Ableton Live 10
 
